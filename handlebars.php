@@ -21,7 +21,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-namespace Barley;
+namespace Barly;
 
 // Pull in V8 for use
 require_once('v8.php');
@@ -31,7 +31,7 @@ class Handlebars {
 	/**
 	 * @var  string  Location of the handlebars file
 	 */
-	public static $handlebars_location = './handlebars-1.0.rc.1.js';
+	public static $handlebars_location = 'handlebars-1.0.rc.1.js';
 
 	/**
 	 * @var  V8Js  Container for the V8Js instance
@@ -49,7 +49,7 @@ class Handlebars {
 			return;
 
 		// Setup the V8 instance
-		self::$_v8 = new \Barley\V8();
+		self::$_v8 = new \Barly\V8();
 
 		// Load Handlebars for use
 		$handlebars = @file_get_contents(self::$handlebars_location);
@@ -64,8 +64,7 @@ class Handlebars {
 
 	/**
 	 * Compiles a handlebars template for use. Adds the template to the global
-	 * scope under `Barley.template`.
-	 * ```
+	 * scope under `Barly.template`.
 	 * 
 	 * @param string $template 
 	 * @return string  String representation of the compiled template function
@@ -76,10 +75,10 @@ class Handlebars {
 		self::_init();
 
 		// Add template to the V8 instance
-		self::$_v8->addVariable('Barley', array('template' => $template));
+		self::$_v8->addVariable('Barly', array('template' => $template));
 
 		// Send the template to handlebars for parsing and return it
-		return self::$_v8->executeString("Handlebars.precompile(Barley.template).toString();");
+		return self::$_v8->executeString("Handlebars.precompile(Barly.template).toString();");
 	}
 
 	/**
@@ -94,13 +93,13 @@ class Handlebars {
 		self::_init();
 
 		// Add the template and data to V8
-		self::$_v8->addVariable('Barley', array('template' => $template, 'data' => $data));
+		self::$_v8->addVariable('Barly', array('template' => $template, 'data' => $data));
 
-		$js = "(function (Barley){"
+		$js = "(function (Barly){"
 		    . "    // Eval the string into a function\n"
-		    . "    var template = eval('('+Barley.template+')');"
-		    . "    return Handlebars.template(template)(Barley.data);"
-		    . "})(Barley);";
+		    . "    var template = eval('('+Barly.template+')');"
+		    . "    return Handlebars.template(template)(Barly.data);"
+		    . "})(Barly);";
 		
 
 		// Compile the template and return it
@@ -121,9 +120,9 @@ class Handlebars {
 		self::_init();
 
 		// Add variables to the V8 instance
-		self::$_v8->addVariable('Barley', array('name' => $name, 'func' => $function));
+		self::$_v8->addVariable('Barly', array('name' => $name, 'func' => $function));
 
 		// Register the helper
-		self::$_v8->executeString("(function (Barley){return Handlebars.registerHelper(Barley.name, eval('('+Barley.func+')'));})(Barley);");
+		self::$_v8->executeString("(function (Barly){return Handlebars.registerHelper(Barly.name, eval('('+Barly.func+')'));})(Barly);");
 	}
 }

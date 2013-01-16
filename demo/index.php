@@ -21,27 +21,39 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-namespace Barly;
+// Require Barly
+ require_once('../handlebars.php');
 
-class V8 extends \V8Js {
 
-	/**
-	 * Adds a variable to the global scope in the V8 instance
-	 * 
-	 * @param  string  $name   Name of the variable to be used in V8
-	 * @param  mixed   $value  Data to be assigned to the variable 
-	 * @return V8
-	 */
-	public function addVariable($name, $value)
-	{
-		// Execute the data
-		$this->executeString("$name = ".json_encode($value));
+// Set the handlebars location
+ \Barly\Handlebars::$handlebars_location = '../handlebars-1.0.rc.1.js';
 
-		return $this;
-	}
+// Get the template
+ $template = @file_get_contents('templates/demo.hbs');
 
-	public function getVariable($name)
-	{
-		return $this->executeString("(function(){return $name;})();");
-	}
+// Make sure it exists
+ if ( ! $template)
+ 	throw new Exception('Could not load the template!');
+
+// Compile the template
+$compiled_template = \Barly\Handlebars::compile($template);
+
+// Build the template data
+$data = array(
+	'title' => 'Barly Demo',
+	'body' => 'This is a demonstration of handlebars and PHP working together!',
+	'list' => array('one', 'two', 'three'),
+	'footer' => '(c) 2013 SinisterMinister'
+);
+
+// Output the template
+try
+{
+	echo \Barly\Handlebars::render($compiled_template, $data);
+}
+catch(V8JsException $e)
+{
+	echo $compiled_template."\n\n";
+	echo $e->getJsSourceLine()."\n\n";
+	echo $e->getJsTrace();
 }
