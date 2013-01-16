@@ -49,7 +49,7 @@ class Handlebars {
 			return;
 
 		// Setup the V8 instance
-		self::$_v8 = new \Barley\V8('Barley');
+		self::$_v8 = new \Barley\V8();
 
 		// Load Handlebars for use
 		$handlebars = @file_get_contents(self::$handlebars_location);
@@ -81,10 +81,10 @@ class Handlebars {
 		self::_init();
 
 		// Add template to the V8 instance
-		self::$_v8::addVariable('Barley', array('template' => $template));
+		self::$_v8->addVariable('Barley', array('template' => $template));
 
 		// Send the template to handlebars for parsing and return it
-		return self::$_v8->executeString("(function (Barley){return (Handlebars.compile(Barley.template)).toString();})(Barley);");
+		return self::$_v8->executeString("Handlebars.precompile(Barley.template).toString();");
 	}
 
 	/**
@@ -99,11 +99,12 @@ class Handlebars {
 		self::_init();
 
 		// Add the template and data to V8
-		self::$_v8::addVariable('Barley', array('template' => $template, 'data' => $data));
+		self::$_v8->addVariable('Barley', array('template' => $template, 'data' => $data));
 
 		$js = "(function (Barley){"
-		    . "    // Eval the string into a function"
-		    . "    return eval('('+Barley.template+')')(Barley.data);"
+		    . "    // Eval the string into a function\n"
+		    . "    var template = eval('('+Barley.template+')');"
+		    . "    return Handlebars.template(template)(Barley.data);"
 		    . "})(Barley);";
 		
 
@@ -117,7 +118,7 @@ class Handlebars {
 		self::_init();
 
 		// Add variables to the V8 instance
-		self::$_v8::addVariable('Barley', array('name' => $name, 'func' => $function));
+		self::$_v8->addVariable('Barley', array('name' => $name, 'func' => $function));
 
 		// Register the helper
 		self::$_v8->executeString("(function (Barley){return Handlebars.registerHelper(Barley.name, eval('('+Barley.func+')'));})(Barley);");
