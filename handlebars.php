@@ -64,12 +64,7 @@ class Handlebars {
 
 	/**
 	 * Compiles a handlebars template for use. Adds the template to the global
-	 * scope under `Barley.template`. Runs the following JS code:
-	 * 
-	 * ```javascript
-	 * (function(Barley) {
-	 *     return Handlebars.compile(Barley.template)).toString();
-	 * })(Barley);
+	 * scope under `Barley.template`.
 	 * ```
 	 * 
 	 * @param string $template 
@@ -89,9 +84,9 @@ class Handlebars {
 
 	/**
 	 * Compiles a handlebar template using the provided data.
-	 * @param type $template 
-	 * @param type $data 
-	 * @return type
+	 * @param string $template 
+	 * @param mixed $data 
+	 * @return string
 	 */
 	public static function render($template, $data)
 	{
@@ -112,6 +107,14 @@ class Handlebars {
 		return self::$_v8->executeString($js);
 	}
 
+	/**
+	 * Registers a helper with handlebars. Function must be written in Javascript
+	 * and passed as a string!
+	 * 
+	 * @param string $name 
+	 * @param string $function 
+	 * @return void
+	 */
 	public static function register_helper($name, $function)
 	{
 		// Fire off init to make sure we've loaded V8
