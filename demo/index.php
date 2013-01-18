@@ -51,6 +51,7 @@ $template = @file_get_contents('templates/demo.hbs');
 try
 {
 	$time = microtime(TRUE);
+
 	\Barly\Handlebars::render($template, $data);
 	
 	$stop = microtime(TRUE);
