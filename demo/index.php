@@ -45,12 +45,18 @@ $template = @file_get_contents('templates/demo.hbs');
  if ( ! $template)
  	throw new Exception('Could not load the template!');
 
+ $template = \Barly\Handlebars::compile($template);
+
 // Output the template
 try
 {
-	echo \Barly\Handlebars::render($template, $data);
+	$time = microtime(TRUE);
+	\Barly\Handlebars::render($template, $data);
+	
 	$stop = microtime(TRUE);
-	echo 'Built in V8 in '.number_format(($stop - $time) * 1000, 3).'ms';
+
+	$v8_time = ($stop - $time) * 1000;
+	echo 'Built in V8 in '.number_format($v8_time, 3).'ms';
 }
 catch(V8JsException $e)
 {
@@ -64,7 +70,16 @@ echo '<br /><br />';
 // Start a timer
 $time = microtime(TRUE);
 
+ob_start();
 require_once('pure-php.php');
+ob_get_clean();
 
 $stop = microtime(TRUE);
-echo 'Built in PHP in '.number_format(($stop - $time) * 1000, 3).'ms';
+
+$php_time = ($stop - $time) * 1000;
+
+echo 'Built in PHP in '.number_format($php_time, 3).'ms <br />';
+
+$v8_slow = $v8_time / $php_time;
+
+echo 'V8 is '.number_format($v8_slow*100).'% slower!';
