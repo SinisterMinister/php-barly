@@ -24,21 +24,10 @@
 // Require Barly
  require_once('../handlebars.php');
 
-
 // Set the handlebars location
  \Barly\Handlebars::$handlebars_location = '../handlebars-1.0.rc.1.js';
 
-// Get the template
- $template = @file_get_contents('templates/demo.hbs');
-
-// Make sure it exists
- if ( ! $template)
- 	throw new Exception('Could not load the template!');
-
-// Compile the template
-$compiled_template = \Barly\Handlebars::compile($template);
-
-// Build the template data
+ // Build the template data
 $data = array(
 	'title' => 'Barly Demo',
 	'body' => 'This is a demonstration of handlebars and PHP working together!',
@@ -46,14 +35,36 @@ $data = array(
 	'footer' => '(c) 2013 SinisterMinister'
 );
 
+// Start a timer
+$time = microtime(TRUE);
+
+// Get the template
+$template = @file_get_contents('templates/demo.hbs');
+
+// Make sure it exists
+ if ( ! $template)
+ 	throw new Exception('Could not load the template!');
+
 // Output the template
 try
 {
-	echo \Barly\Handlebars::render($compiled_template, $data);
+	echo \Barly\Handlebars::render($template, $data);
+	$stop = microtime(TRUE);
+	echo 'Built in V8 in '.number_format(($stop - $time) * 1000, 3).'ms';
 }
 catch(V8JsException $e)
 {
-	echo $compiled_template."\n\n";
+	echo $template."\n\n";
 	echo $e->getJsSourceLine()."\n\n";
 	echo $e->getJsTrace();
 }
+
+echo '<br /><br />';
+
+// Start a timer
+$time = microtime(TRUE);
+
+require_once('pure-php.php');
+
+$stop = microtime(TRUE);
+echo 'Built in PHP in '.number_format(($stop - $time) * 1000, 3).'ms';
