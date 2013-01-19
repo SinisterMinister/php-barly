@@ -56,7 +56,7 @@ class Handlebars {
 
 		// Make sure that we actually loaded it
 		if ( ! $handlebars)
-			throw new Exception('The specified handlebars file could not be loaded or found!');
+			throw new \Exception('The specified handlebars file could not be loaded or found!');
 
 		// Load HB into V8
 		self::$_v8->executeString($handlebars);
