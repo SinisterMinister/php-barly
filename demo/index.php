@@ -52,8 +52,8 @@ try
 {
 	$time = microtime(TRUE);
 
-	\Barly\Handlebars::render($template, $data);
-	
+	echo \Barly\Handlebars::render($template, $data);
+
 	$stop = microtime(TRUE);
 
 	$v8_time = ($stop - $time) * 1000;
@@ -71,9 +71,7 @@ echo '<br /><br />';
 // Start a timer
 $time = microtime(TRUE);
 
-ob_start();
 require_once('pure-php.php');
-ob_get_clean();
 
 $stop = microtime(TRUE);
 
