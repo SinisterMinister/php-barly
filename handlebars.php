@@ -78,7 +78,7 @@ class Handlebars {
 		self::$_v8->addVariable('Barly', array('template' => $template));
 
 		// Send the template to handlebars for parsing and return it
-		return self::$_v8->executeString("Handlebars.precompile(Barly.template).toString();");
+		return self::$_v8->executeString("Handlebars.precompile(Barly.template);");
 	}
 
 	/**
@@ -94,6 +94,20 @@ class Handlebars {
 
 		// Add the template and data to V8
 		self::$_v8->addVariable('Barly', array('template' => $template, 'data' => $data));
+
+		// Check to see if the template was already compiled
+		try
+		{
+			self::$_v8->executeString("(function(){return eval('('+Barly.template+')')})();");
+		}
+		catch (\V8JsException $e)
+		{
+			// Compile the template
+			$compiled_template = self::compile($template);
+
+			// Add the template and data to V8
+			self::$_v8->addVariable('Barly', array('template' => $compiled_template, 'data' => $data));
+		}
 
 		$js = "(function (Barly){"
 		    . "    // Eval the string into a function\n"
