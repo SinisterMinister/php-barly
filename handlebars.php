@@ -114,7 +114,6 @@ class Handlebars {
 		    . "    var template = eval('('+Barly.template+')');"
 		    . "    return Handlebars.template(template)(Barly.data);"
 		    . "})(Barly);";
-		
 
 		// Compile the template and return it
 		return self::$_v8->executeString($js);
